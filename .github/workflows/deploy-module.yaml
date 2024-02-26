@@ -59,7 +59,7 @@ jobs:
     outputs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
-  set-determine-tag-pull-request:
+  set-tag-pull-request:
     needs: validate-event-pull-request
     if: ${{ needs.validate-event-pull-request.outputs.tag == 'tbr' }} && ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
@@ -73,14 +73,18 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
 
-  show-tag:
-    needs: [set-tag-event-push, set-determine-tag-pull-request]
+  show-tag-event-push:
+    needs: set-tag-event-push
+    if: ${{ needs.set-tag-event-push.tag != '' }} && ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Show Tag
-        run: |
-          echo "Tag ------> ${{ needs.set-tag-event-push.tag }}"
-          echo "Tag ------> ${{ needs.set-determine-tag-pull-request.tag }}"
-          echo "Head Ref ------>  ${{ github.head_ref }}"
-          echo "GitHub Ref ------> ${{ github.ref }}"
-          echo "Event Name ------> ${{ github.event_name }}"
+        run: echo "Tag ------> ${{ needs.set-tag-event-push.outputs.tag }}"
+
+  show-tag-pull-request:
+    needs: set-tag-pull-request
+    if: ${{ needs.set-tag-pull-request.tag != '' }} && ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show Tag
+        run: echo "Tag ------> ${{ needs.set-tag-pull-request.outputs.tag }}"
