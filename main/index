@@ -4,3 +4,8 @@ TEST : V3
 TEST : V4
 TEST : V5
 TEST : V6
+Run echo "Tag ------> "
+Tag ------> 
+Head Ref ------>  
+GitHub Ref ------> refs/heads/TBR-4326-releases-test
+Event Name ------> push

@@ -47,8 +47,8 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}  
     
   validate-event-pull-request:
-    needs: set-tag-event-push
-    if: ${{ needs.set-tag-event-push.tag == '' }} && ${{ github.event_name == 'pull_request' }}
+    needs: validate-event-push
+    if: ${{ needs.validate-event-push != 'releases' }}
     runs-on: ubuntu-latest
     steps:
       - name: Determine Tag
@@ -61,7 +61,7 @@ jobs:
 
   set-tag-pull-request:
     needs: validate-event-pull-request
-    if: ${{ needs.validate-event-pull-request.outputs.tag == 'tbr' }} && ${{ github.event_name == 'pull_request' }}
+    if: ${{ needs.validate-event-pull-request.outputs.tag == 'tbr' }}
     runs-on: ubuntu-latest
     steps:
       - name: Determine Tag
