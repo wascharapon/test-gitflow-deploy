@@ -48,7 +48,7 @@ jobs:
     
   validate-event-pull-request:
     needs: set-tag-event-push
-    if: ${{ needs.set-tag-event-push.tag == "" }} && ${{ github.event_name == 'pull_request' }}
+    if: ${{ isEmpty(needs.set-tag-event-push.outputs.tag) && ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - name: Determine Tag
