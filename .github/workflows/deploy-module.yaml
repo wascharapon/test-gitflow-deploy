@@ -14,28 +14,20 @@ jobs:
   validate-branch-name-action-push:
     runs-on: ubuntu-latest
     steps:
-      - name: ---> steps.determine_tag.outputs.tag
-        run: echo "${{ steps.determine_tag.outputs.tag }}"
-      - name: ---> github.head_ref
-        run: echo "${{ github.head_ref }}"
-      - name: ---> github.ref
-        run: echo "${{ github.ref }}"
-      - name: ---> github.event_name
-        run: echo "${{ github.event_name }}"
-      - name: ---> github.event
-        run: echo "${{ github.event }}"
-      - name: ---> github.event.inputs
-        run: echo "${{ github.event.inputs }}"
-      - name: ---> github.event.outputsF
-        run: echo "${{ github.event.outputs }}"
-      - name: ---> github.event.repository
-        run: echo "${{ github.event.repository }}"
-      - name: ---> github.event.repository.owner
-        run: echo "${{ github.event.repository.owner }}"
-      - name: ---> github.event.repository.name
-        run: echo "${{ github.event.repository.name }}"
-      - name: ---> github.event.repository.full_name
-        run: echo "${{ github.event.repository.full_name }}"
+      - name: Show Tag
+        run: |
+          echo "Tag: ${{ steps.determine_tag.outputs.tag }}"
+          echo "Head Ref: ${{ github.head_ref }}"
+          echo "GitHub Ref: ${{ github.ref }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Event: ${{ toJson(github.event) }}"
+          echo "Event Inputs: ${{ toJson(github.event.inputs) }}"
+          echo "Event Outputs: ${{ toJson(github.event.outputs) }}"
+          echo "Repository: ${{ toJson(github.event.repository) }}"
+          echo "Repository Owner: ${{ github.event.repository.owner }}"
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "Repository Full Name: ${{ github.event.repository.full_name }}"
+
 
 # jobs:
 #   validate-branch-name-action-push:
