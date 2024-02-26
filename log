@@ -1,0 +1,31 @@
+# github.ref = echo refs/heads/TBR-4326-releases-test
+# github.event.repository = 2BERich-FE-BO
+# github.event.repository.full_name =  echo "Tag is 2BeRich-System/2BERich-FE-BO"
+# github.event.repository.name = 2BERich-FE-BO
+# github.event_name = push
+
+# echo "refs/heads/TBR-4326-releases-test" | tr "[:upper:]" "[:lower:]" | grep -o -i "tbr"
+# echo "TBR-4326-releases-test" | tr "[:upper:]" "[:lower:]" |  cut -d "-" -f 1,2
+
+      # - name: Show Tag steps.determine_tag.outputs.tag
+      #   run: echo "Tag is ${{ steps.determine_tag.outputs.tag }}"
+      # - name: Show Tag github.head_ref
+      #   run: echo "Tag is ${{ github.head_ref }}"
+      # - name: Show Tag github.ref
+      #   run: echo "Tag is ${{ github.ref }}"
+      # - name: Show Tag github.event_name
+      #   run: echo "Tag is ${{ github.event_name }}"
+      # - name: Show Tag github.event
+      #   run: echo "Tag is ${{ github.event }}"
+      # - name: Show Tag github.event.inputs
+      #   run: echo "Tag is ${{ github.event.inputs }}"
+      # - name: Show Tag github.event.outputs
+      #   run: echo "Tag is ${{ github.event.outputs }}"
+      # - name: Show Tag github.event.repository
+      #   run: echo "Tag is ${{ github.event.repository }}"
+      # - name: Show Tag github.event.repository.owner
+      #   run: echo "Tag is ${{ github.event.repository.owner }}"
+      # - name: Show Tag github.event.repository.name
+      #   run: echo "Tag is ${{ github.event.repository.name }}"
+      # - name: Show Tag github.event.repository.full_name
+      #   run: echo "Tag is ${{ github.event.repository.full_name }}"

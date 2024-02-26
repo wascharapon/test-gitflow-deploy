@@ -12,51 +12,78 @@ on:
 
 jobs:
   validate-branch-name-action-push:
-    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Determine Tag
-        id: determine_tag
-        run: echo "::set-output name=tag::$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "tbr")"
-      - name: Show Tag
-        run: echo "Tag is ${{ steps.determine_tag.outputs.tag }}"
-    outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}
+      - name: ---> steps.determine_tag.outputs.tag
+        run: echo "${{ steps.determine_tag.outputs.tag }}"
+      - name: ---> github.head_ref
+        run: echo "${{ github.head_ref }}"
+      - name: ---> github.ref
+        run: echo "${{ github.ref }}"
+      - name: ---> github.event_name
+        run: echo "${{ github.event_name }}"
+      - name: ---> github.event
+        run: echo "${{ github.event }}"
+      - name: ---> github.event.inputs
+        run: echo "${{ github.event.inputs }}"
+      - name: ---> github.event.outputsF
+        run: echo "${{ github.event.outputs }}"
+      - name: ---> github.event.repository
+        run: echo "${{ github.event.repository }}"
+      - name: ---> github.event.repository.owner
+        run: echo "${{ github.event.repository.owner }}"
+      - name: ---> github.event.repository.name
+        run: echo "${{ github.event.repository.name }}"
+      - name: ---> github.event.repository.full_name
+        run: echo "${{ github.event.repository.full_name }}"
 
-  set-determine-tag-action-push:
-    needs: validate-branch-name-action-push
-    if: ${{ needs.validate-branch-name-action-push.outputs.tag == 'tbr' }} && ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Determine Tag
-        id: determine_tag
-        run: echo "::set-output name=tag::admin-panel-fe-$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | cut -d "/" -f 3 | cut -d "-" -f 1,2)"
-      - name: Show Tag
-        run: echo "Tag is ${{ steps.determine_tag.outputs.tag }}"
-    outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}
+# jobs:
+#   validate-branch-name-action-push:
+#     if: ${{ github.event_name == 'push' }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Determine Tag
+#         id: determine_tag
+#         run: echo "::set-output name=tag::$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "tbr")"
+#       - name: Show Tag
+#         run: echo "${{ steps.determine_tag.outputs.tag }}"
+#     outputs:
+#       tag: ${{ steps.determine_tag.outputs.tag }}
 
-  validate-branch-name-pull-request-action-closed:
-    if: ${{ github.event_name == 'pull_request' }} || ${{ github.event.action == 'closed' }} && ${{ github.base_ref == 'develop' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Determine Tag
-        id: determine_tag
-        run: echo "::set-output name=tag::$(echo "${{ github.head_ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "tbr")"
-      - name: Show Tag
-        run: echo "Tag is ${{ steps.determine_tag.outputs.tag }}"
-    outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}
+#   set-determine-tag-action-push:
+#     needs: validate-branch-name-action-push
+#     if: ${{ needs.validate-branch-name-action-push.outputs.tag == 'tbr' }} && ${{ github.event_name == 'push' }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Determine Tag
+#         id: determine_tag
+#         run: echo "::set-output name=tag::admin-panel-fe-$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | cut -d "/" -f 3 | cut -d "-" -f 1,2)"
+#       - name: Show Tag
+#         run: echo "${{ steps.determine_tag.outputs.tag }}"
+#     outputs:
+#       tag: ${{ steps.determine_tag.outputs.tag }}
 
-  set-determine-tag-pull-request-action-closed:
-    needs: validate-branch-name-pull-request-action-closed
-    if: ${{ needs.validate-branch-name-pull-request-action-closed.outputs.tag == 'tbr' }} && ${{ github.event_name == 'pull_request' }} || ${{ github.event.action == 'closed' }} && ${{ github.base_ref == 'develop' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Determine Tag
-        id: determine_tag
-        run: echo "::set-output name=tag::admin-panel-fe-$(echo "${{ github.head_ref }}" | tr "[:upper:]" "[:lower:]" | cut -d "/" -f 3 | cut -d "-" -f 1,2)"
-      - name: Show Tag
-        run: echo "Tag is ${{ steps.determine_tag.outputs.tag }}"
-    outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}
+#   validate-branch-name-pull-request-action-closed:
+#     if: ${{ github.event_name == 'pull_request' }} || ${{ github.event.action == 'closed' }} && ${{ github.base_ref == 'develop' }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Determine Tag
+#         id: determine_tag
+#         run: echo "::set-output name=tag::$(echo "${{ github.head_ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "tbr")"
+#       - name: Show Tag
+#         run: echo "${{ steps.determine_tag.outputs.tag }}"
+#     outputs:
+#       tag: ${{ steps.determine_tag.outputs.tag }}
+
+#   set-determine-tag-pull-request-action-closed:
+#     needs: validate-branch-name-pull-request-action-closed
+#     if: ${{ needs.validate-branch-name-pull-request-action-closed.outputs.tag == 'tbr' }} && ${{ github.event_name == 'pull_request' }} || ${{ github.event.action == 'closed' }} && ${{ github.base_ref == 'develop' }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Determine Tag
+#         id: determine_tag
+#         run: echo "::set-output name=tag::admin-panel-fe-$(echo "${{ github.head_ref }}" | tr "[:upper:]" "[:lower:]" | cut -d "/" -f 3 | cut -d "-" -f 1,2)"
+#       - name: Show Tag
+#         run: echo "${{ steps.determine_tag.outputs.tag }}"
+#     outputs:
+#       tag: ${{ steps.determine_tag.outputs.tag }}
