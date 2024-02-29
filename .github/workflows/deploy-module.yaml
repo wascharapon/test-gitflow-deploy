@@ -51,7 +51,7 @@ jobs:
   build-docker-image:
     runs-on: ubuntu-latest
     needs: set-tag-event-push
-    if: ${{ needs.set-tag-event-push.outputs.tag == 'tbr' }}
+    if: ${{ needs.set-tag-event-push.outputs.tag != '' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -89,7 +89,7 @@ jobs:
   init-deploy-module:
     runs-on: ubuntu-latest
     needs: build-docker-image
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ needs.build-docker-image.outputs.tag != ''}}
     steps:
       - name: Show Tag Deploy Module
         run: echo "DEPLOY MODULE ${{ github.event_name }}"
