@@ -24,16 +24,16 @@ jobs:
 
   # deploy main module
   validate-event-push:
-      if: ${{ github.event_name == 'push' }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Determine Tag
-          id: determine_tag
-          run: echo "::set-output name=tag::$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "releases")"
-        - name: Show Tag
-          run: echo "${{ steps.determine_tag.outputs.tag }}"
-      outputs:
-        tag: ${{ steps.determine_tag.outputs.tag }}
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine Tag
+        id: determine_tag
+        run: echo "::set-output name=tag::$(echo "${{ github.ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "releases")"
+      - name: Show Tag
+        run: echo "${{ steps.determine_tag.outputs.tag }}"
+    outputs:
+      tag: ${{ steps.determine_tag.outputs.tag }}
 
   set-tag-event-push:
     needs: validate-event-push
@@ -46,9 +46,34 @@ jobs:
       - name: Show Tag
         run: echo "${{ steps.determine_tag.outputs.tag }}"
     outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}      
+      tag: ${{ steps.determine_tag.outputs.tag }}
 
-  # deploy secondary module
+  build-docker-image:
+    needs: set-tag-event-push
+    if: ${{ needs.set-tag-event-push.outputs.tag == 'tbr' }} && ${{ github.event_name == 'push' }}
+    runs-on: self-hosted
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: asia-southeast1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Pre Build
+        run: "docker system prune -af && docker system prune --volumes -af"
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          file: Dockerfile
+          push: true
+          tags: asia-southeast1-docker.pkg.dev/scamo-group/toberich-stag/${{ needs.set-tag-event-push.outputs.tag }}:latest
+    outputs:
+      image: asia-southeast1-docker.pkg.dev/scamo-group/toberich-stag/${{ needs.set-tag-event-push.outputs.tag }}@${{ steps.docker_build.outputs.digest }}
+      tag: ${{ needs.set-tag-event-push.outputs.tag }}
+
   validate-event-pull-request:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
@@ -74,21 +99,18 @@ jobs:
     outputs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
-  # init deploy main module
-
-  deploy-module:
-    needs: set-tag-event-push
-    if: ${{ needs.set-tag-event-push.tag != '' }} && ${{ github.event_name == 'push' }}
+  init-deploy-module:
+    needs: build-docker-image
+    if: ${{ github.event_name == 'push' }} && ${{ github.base_ref != 'develop' }} && ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Show Tag
-        run: echo "Tag ------> ${{ needs.set-tag-event-push.outputs.tag }}"
+    - name: Show Tag
+      run: echo "DEPLOY MODULE"
 
-  # init deploy secondary module
-  delete-module:
+  init-delete-module:
     needs: set-tag-pull-request
-    if: ${{ needs.set-tag-pull-request.tag != '' }} && ${{ github.event_name == 'pull_request' }} && ${{ github.base_ref == 'develop' }}
+    if: ${{ github.base_ref == 'develop' }} && ${{ github.event_name == 'pull_request' }} && ${{ github.event_name != 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Show Tag
-        run: echo "Tag ------> ${{ needs.set-tag-pull-request.outputs.tag }}"
+        run: echo "DELETE MODULE"
