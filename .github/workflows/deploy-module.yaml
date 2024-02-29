@@ -67,7 +67,7 @@ jobs:
     steps:
       - name: Determine Tag
         id: determine_tag
-        run: echo "::set-output name=tag::$(echo "${{ github.base_ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "releases")"
+        run: echo "::set-output name=tag::$(echo "${{ github.head_ref }}" | tr "[:upper:]" "[:lower:]" | grep -o "releases")"
       - name: Show Tag
         run: echo "${{ steps.determine_tag.outputs.tag }}"
     outputs:
