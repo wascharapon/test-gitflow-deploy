@@ -11,10 +11,10 @@ on:
       - "!main"
 
 jobs:
-  get-data:
+  preview-github-data:
     runs-on: ubuntu-latest
     steps:
-      - name: Show Tag
+      - name: Show Tag Preview GitHub Data
         run: |
           echo "Tag ------> ${{ steps.determine_tag.outputs.tag }}"
           echo "Base Ref ------> ${{ github.base_ref }}"
@@ -24,8 +24,8 @@ jobs:
 
   # deploy main module
   validate-event-push:
-    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -36,9 +36,9 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
   set-tag-event-push:
-    needs: validate-event-push
-    if: ${{ needs.validate-event-push.outputs.tag == 'releases' }} && ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    needs: validate-event-push
+    if: ${{ needs.validate-event-push.outputs.tag == 'releases' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -49,9 +49,9 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
   build-docker-image:
-    needs: set-tag-event-push
-    if: ${{ needs.set-tag-event-push.outputs.tag == 'tbr' }} && ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    needs: set-tag-event-push
+    if: ${{ needs.set-tag-event-push.outputs.tag == 'tbr' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -59,12 +59,11 @@ jobs:
       - name: Show Tag
         run: echo "${{ steps.determine_tag.outputs.tag }}"
     outputs:
-      tag: ${{ steps.determine_tag.outputs.tag }}    
-
+      tag: ${{ steps.determine_tag.outputs.tag }}
 
   validate-event-pull-request:
-    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -75,9 +74,9 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
   set-tag-pull-request:
-    needs: validate-event-pull-request
-    if: ${{ needs.validate-event-pull-request.outputs.tag == 'releases' }} && ${{ github.event_name == 'pull_request' }} && ${{ github.base_ref == 'develop' }}
     runs-on: ubuntu-latest
+    needs: validate-event-pull-request
+    if: ${{ needs.validate-event-pull-request.outputs.tag == 'releases' }}
     steps:
       - name: Determine Tag
         id: determine_tag
@@ -88,17 +87,17 @@ jobs:
       tag: ${{ steps.determine_tag.outputs.tag }}
 
   init-deploy-module:
-    needs: build-docker-image
-    if: ${{ github.event_name == 'push' }} && ${{ github.base_ref != 'develop' }} && ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
+    needs: build-docker-image
+    if: ${{ github.event_name == 'push' }}
     steps:
-    - name: Show Tag
-      run: echo "DEPLOY MODULE"
+      - name: Show Tag Deploy Module
+        run: echo "DEPLOY MODULE ${{ github.event_name }}"
 
   init-delete-module:
-    needs: set-tag-pull-request
-    if: ${{ github.base_ref == 'develop' }} && ${{ github.event_name == 'pull_request' }} && ${{ github.event_name != 'push' }}
     runs-on: ubuntu-latest
+    needs: set-tag-pull-request
+    if: ${{ github.base_ref == 'develop' }}
     steps:
-      - name: Show Tag
-        run: echo "DELETE MODULE"
+      - name: Show Tag Delete Module
+        run: echo "DELETE MODULE ${{ github.base_ref }}"
