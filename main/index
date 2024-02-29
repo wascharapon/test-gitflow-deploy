@@ -8,6 +8,7 @@ TEST : V6
 TEST : V8
 TEST : V9
 TEST : V9
+TEST : Step Deploy
 Run echo "Tag ------> "
 Tag ------> 
 Head Ref ------>  
