@@ -51,7 +51,7 @@ jobs:
   build-docker-image:
     needs: set-tag-event-push
     if: ${{ needs.set-tag-event-push.outputs.tag == 'tbr' }} && ${{ github.event_name == 'push' }}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Determine Tag
         id: determine_tag
